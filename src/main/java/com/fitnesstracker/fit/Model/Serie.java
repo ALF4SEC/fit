@@ -1,17 +1,28 @@
 package com.fitnesstracker.fit.Model;
-import java.sql.Time;
+import java.time.LocalTime;
 
-public class Serie {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.io.Serializable;
+
+@Entity
+public class Serie implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private int repeticiones;
     private double peso;
-    private Time duracion;
+    private LocalTime duracion;
 
     public Serie(int repeticiones, double peso) {
         this.repeticiones = repeticiones;
         this.peso = peso;
     }
 
-    public Serie(Time duracion) {
+    public Serie(LocalTime duracion) {
         this.duracion = duracion;
     }
 
@@ -31,11 +42,11 @@ public class Serie {
         this.peso = peso;
     }
 
-    public Time getDuracion() {
+    public LocalTime getDuracion() {
         return duracion;
     }
 
-    public void setDuracion(Time duracion) {
+    public void setDuracion(LocalTime duracion) {
         this.duracion = duracion;
     }
 }

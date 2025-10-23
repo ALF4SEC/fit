@@ -1,53 +1,64 @@
 package com.fitnesstracker.fit.Model;
-import java.sql.Date;
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
-
+@Entity
 public class Sesion {
-    private Date fecha;
-    private Time inicioSesion;
-    private Time finSesion;
-    private Ejercicio[] ejercicios;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDate fecha;
+    private LocalTime inicioSesion;
+    private LocalTime finSesion;
+    
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Ejercicio> ejercicios;
 
-    public Sesion(Date fecha, Time inicioSesion, Time finSesion, Ejercicio[] ejercicios) {
+    public Sesion(LocalDate fecha, LocalTime inicioSesion, LocalTime finSesion, List<Ejercicio> ejercicios) {
         this.fecha = fecha;
         this.inicioSesion = inicioSesion;
         this.finSesion = finSesion;
         this.ejercicios = ejercicios;
     }
 
-    public Date getFecha() {
+    public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
 
 
-    public Time getInicioSesion() {
+    public LocalTime getInicioSesion() {
         return inicioSesion;
     }
 
-    public void setInicioSesion(Time inicioSesion) {
+    public void setInicioSesion(LocalTime inicioSesion) {
         this.inicioSesion = inicioSesion;
     }
 
-    public Time getFinSesion() {
+    public LocalTime getFinSesion() {
         return finSesion;
     }
 
-    public void setFinSesion(Time finSesion) {
+    public void setFinSesion(LocalTime finSesion) {
         this.finSesion = finSesion;
     }
 
-    public Ejercicio[] getEjercicios() {
+    public List<Ejercicio> getEjercicios() {
         return ejercicios;
     }
 
-    public void setEjercicios(Ejercicio[] ejercicios) {
+    public void setEjercicios(List<Ejercicio> ejercicios) {
         this.ejercicios = ejercicios;
     }
 }
