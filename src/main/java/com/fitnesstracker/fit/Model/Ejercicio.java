@@ -1,45 +1,69 @@
 package com.fitnesstracker.fit.Model;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.io.Serializable;
+import jakarta.persistence.OrderBy;
 
 @Entity
-public class Ejercicio implements Serializable{
+public class Ejercicio implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String nombre;
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Serie> series;
+    @Enumerated(EnumType.STRING)
+    private GrupoMuscular grupoMuscular;
 
-    public Ejercicio(String nombre, String descripcion) {
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sesion_id")
+    private Sesion sesion;
+
+    @OneToMany(mappedBy = "ejercicio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Serie> series = new ArrayList<>();
+
+    // Constructor vacío que necesita JPA
+    protected Ejercicio() {
+    }
+
+    public Ejercicio(String nombre, String descripcion, GrupoMuscular grupoMuscular) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.grupoMuscular = grupoMuscular;
     }
 
-    public Ejercicio(String nombre, String descripcion, List<Serie>  series) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.series = series;
+    // Mantiene sincronizados los dos lados de la relación
+    public void addSerie(Serie serie) {
+        series.add(serie);
+        serie.setEjercicio(this);
     }
 
-    public List<Serie> getSeries() {
-        return series;
+    public void removeSerie(Serie serie) {
+        series.remove(serie);
+        serie.setEjercicio(null);
     }
 
-    public void setSeries(List<Serie> series) {
-        this.series = series;
+    // Suma de repeticiones x peso de todas las series
+    public double getVolumen() {
+        return series.stream().mapToDouble(Serie::getVolumen).sum();
     }
 
-    public Ejercicio(String nombre) {
-        this.nombre = nombre;
+    public Long getId() {
+        return id;
     }
 
     public String getNombre() {
@@ -56,5 +80,25 @@ public class Ejercicio implements Serializable{
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public GrupoMuscular getGrupoMuscular() {
+        return grupoMuscular;
+    }
+
+    public void setGrupoMuscular(GrupoMuscular grupoMuscular) {
+        this.grupoMuscular = grupoMuscular;
+    }
+
+    public Sesion getSesion() {
+        return sesion;
+    }
+
+    public void setSesion(Sesion sesion) {
+        this.sesion = sesion;
+    }
+
+    public List<Serie> getSeries() {
+        return series;
     }
 }
